@@ -1,4 +1,4 @@
-// Licensed under the MIT License. See LICENSE file for details.
+// Licensed under the MIT License. See LICENSE file for details
 
 #include "Engine.hpp"
 #include "glcommon.h"
