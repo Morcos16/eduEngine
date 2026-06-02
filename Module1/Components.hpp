@@ -29,6 +29,6 @@ struct MeshComponent
 
 struct PlayerControllerComponent
 {
-
+	float moveSpeed{ 5.0f };
 };
 #endif

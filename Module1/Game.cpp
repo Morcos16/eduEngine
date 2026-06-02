@@ -25,7 +25,7 @@ bool Game::init()
 
     auto amy = registry.create();
     auto amy2 = registry.create();
-    auto amy3 = registry.create();
+    auto moveableAmy = registry.create();
     auto horse = registry.create();
     auto fox = registry.create();
     auto grass = registry.create();
@@ -49,7 +49,7 @@ bool Game::init()
 
     // Amy 1 & 2 & 3
     auto& amyTransform = registry.emplace<TransformComponent>(amy);
-    amyTransform.position = glm::vec3(0, 0, 0);
+    amyTransform.position = glm::vec3(3, 0, 0);
     amyTransform.scale = glm::vec3(0.03f, 0.03f, 0.03f);
     amyTransform.rotationY = 0.0f;
 
@@ -66,15 +66,18 @@ bool Game::init()
         amy2,
         characterMesh
     );
-    auto& amy3Transform = registry.emplace<TransformComponent>(amy3);
-    amy3Transform.position = glm::vec3(3, 0, 0);
+    auto& amy3Transform = registry.emplace<TransformComponent>(moveableAmy);
+    amy3Transform.position = player.pos;
     amy3Transform.scale = glm::vec3(0.03f, 0.03f, 0.03f);
     amy3Transform.rotationY = 0.0f;
 
     registry.emplace<MeshComponent>(
-        amy3,
+        moveableAmy,
         characterMesh
     );
+
+    registry.emplace<LinearVelocityComponent>(moveableAmy);
+    registry.emplace<PlayerControllerComponent>(moveableAmy);
 
     //Horse 1 & 2
     auto& horseTransform = registry.emplace<TransformComponent>(horse);
@@ -179,10 +182,11 @@ void Game::update(
     float deltaTime,
     InputManagerPtr input)
 {
+    playerControllerSystem.update(registry, deltaTime, input, camera.yaw);
     movementSystem.update(registry, deltaTime);
     updateCamera(input);
 
-    updatePlayer(deltaTime, input);
+    //updatePlayer(deltaTime, input);
 
     pointlight.pos = glm::vec3(
         glm_aux::R(time * 0.1f, { 0.0f, 1.0f, 0.0f }) *
@@ -471,32 +475,32 @@ void Game::updateCamera(
     camera.pos = camera.lookAt + glm::vec3(rotatedPos);
 }
 
-void Game::updatePlayer(
-    float deltaTime,
-    InputManagerPtr input)
-{
-    // Fetch keys relevant for player movement
-    using Key = eeng::InputManager::Key;
-    bool W = input->IsKeyPressed(Key::W);
-    bool A = input->IsKeyPressed(Key::A);
-    bool S = input->IsKeyPressed(Key::S);
-    bool D = input->IsKeyPressed(Key::D);
-
-    // Compute vectors in the local space of the player
-    player.fwd = glm::vec3(glm_aux::R(camera.yaw, glm_aux::vec3_010) * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));
-    player.right = glm::cross(player.fwd, glm_aux::vec3_010);
-
-    // Compute the total movement as a 3D vector
-    auto movement =
-        player.fwd * player.velocity * deltaTime * ((W ? 1.0f : 0.0f) + (S ? -1.0f : 0.0f)) +
-        player.right * player.velocity * deltaTime * ((A ? -1.0f : 0.0f) + (D ? 1.0f : 0.0f));
-
-    // Update player position and forward view ray
-    player.pos += movement;
-    player.viewRay = glm_aux::Ray{ player.pos + glm::vec3(0.0f, 2.0f, 0.0f), player.fwd };
-
-    // Update camera to track the player
-    camera.lookAt += movement;
-    camera.pos += movement;
-
-}
+//void Game::updatePlayer(
+//    float deltaTime,
+//    InputManagerPtr input)
+//{
+//    // Fetch keys relevant for player movement
+//    using Key = eeng::InputManager::Key;
+//    bool W = input->IsKeyPressed(Key::W);
+//    bool A = input->IsKeyPressed(Key::A);
+//    bool S = input->IsKeyPressed(Key::S);
+//    bool D = input->IsKeyPressed(Key::D);
+//
+//    // Compute vectors in the local space of the player
+//    player.fwd = glm::vec3(glm_aux::R(camera.yaw, glm_aux::vec3_010) * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));
+//    player.right = glm::cross(player.fwd, glm_aux::vec3_010);
+//
+//    // Compute the total movement as a 3D vector
+//    auto movement =
+//        player.fwd * player.velocity * deltaTime * ((W ? 1.0f : 0.0f) + (S ? -1.0f : 0.0f)) +
+//        player.right * player.velocity * deltaTime * ((A ? -1.0f : 0.0f) + (D ? 1.0f : 0.0f));
+//
+//    // Update player position and forward view ray
+//    player.pos += movement;
+//    player.viewRay = glm_aux::Ray{ player.pos + glm::vec3(0.0f, 2.0f, 0.0f), player.fwd };
+//
+//    // Update camera to track the player
+//    camera.lookAt += movement;
+//    camera.pos += movement;
+//
+//}

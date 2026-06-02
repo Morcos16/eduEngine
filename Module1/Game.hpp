@@ -46,6 +46,7 @@ private:
     //systems
     MovementSystem movementSystem;
     RenderSystem renderSystem;
+    PlayerControllerSystem playerControllerSystem;
 
     /// @brief For rendering of GUI elements
     void renderUI();
@@ -131,9 +132,9 @@ private:
 
     /// @brief Placeholder system for updating the 'player' based on inputs
     /// @param deltaTime 
-    void updatePlayer(
+    /*void updatePlayer(
         float deltaTime,
-        InputManagerPtr input);
+        InputManagerPtr input);*/
 };
 
 #endif
