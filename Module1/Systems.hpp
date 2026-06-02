@@ -2,6 +2,7 @@
 
 #include <entt/entt.hpp>
 #include "InputManager.hpp"
+#include "Camera.hpp"
 
 namespace eeng 
 {
@@ -23,5 +24,11 @@ public:
 class PlayerControllerSystem
 {
 public:
-	void update(entt::registry& registry, float dt, InputManagerPtr input, float cameraYaw);
+	void update(entt::registry& registry, float dt, InputManagerPtr input, Camera& camera);
+};
+
+class CameraSystem
+{
+public:
+	void update(entt::registry& registry, InputManagerPtr input, Camera& camera);
 };

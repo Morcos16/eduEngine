@@ -31,4 +31,13 @@ struct PlayerControllerComponent
 {
 	float moveSpeed{ 5.0f };
 };
+
+struct CameraComponent
+{
+	float distance{ 10.0f };
+	float height{ 2.0f };
+	float sensitivity{ 0.01f };
+
+	glm::ivec2 mouse_xy_prev{ -1, -1 };
+};
 #endif

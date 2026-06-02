@@ -5,6 +5,7 @@
 #include "Log.hpp"
 #include "Game.hpp"
 #include "Components.hpp"
+#include "Camera.hpp"
 
 bool Game::init()
 {
@@ -47,7 +48,7 @@ bool Game::init()
     characterMesh = std::make_shared<eeng::RenderableMesh>();
     characterMesh->load("assets/Amy/Ch46_nonPBR.fbx");
 
-    // Amy 1 & 2 & 3
+    // Amy 1 & 2
     auto& amyTransform = registry.emplace<TransformComponent>(amy);
     amyTransform.position = glm::vec3(3, 0, 0);
     amyTransform.scale = glm::vec3(0.03f, 0.03f, 0.03f);
@@ -66,6 +67,8 @@ bool Game::init()
         amy2,
         characterMesh
     );
+
+    // Playable Amy
     auto& amy3Transform = registry.emplace<TransformComponent>(moveableAmy);
     amy3Transform.position = player.pos;
     amy3Transform.scale = glm::vec3(0.03f, 0.03f, 0.03f);
@@ -78,6 +81,7 @@ bool Game::init()
 
     registry.emplace<LinearVelocityComponent>(moveableAmy);
     registry.emplace<PlayerControllerComponent>(moveableAmy);
+    registry.emplace<CameraComponent>(moveableAmy);
 
     //Horse 1 & 2
     auto& horseTransform = registry.emplace<TransformComponent>(horse);
@@ -182,9 +186,10 @@ void Game::update(
     float deltaTime,
     InputManagerPtr input)
 {
-    playerControllerSystem.update(registry, deltaTime, input, camera.yaw);
+    playerControllerSystem.update(registry, deltaTime, input, camera);
     movementSystem.update(registry, deltaTime);
-    updateCamera(input);
+    cameraSystem.update(registry, input, camera);
+    //updateCamera(input);
 
     //updatePlayer(deltaTime, input);
 
@@ -454,26 +459,26 @@ void Game::destroy()
 
 }
 
-void Game::updateCamera(
-    InputManagerPtr input)
-{
-    // Fetch mouse and compute movement since last frame
-    auto mouse = input->GetMouseState();
-    glm::ivec2 mouse_xy{ mouse.x, mouse.y };
-    glm::ivec2 mouse_xy_diff{ 0, 0 };
-    if (mouse.leftButton && camera.mouse_xy_prev.x >= 0)
-        mouse_xy_diff = camera.mouse_xy_prev - mouse_xy;
-    camera.mouse_xy_prev = mouse_xy;
-
-    // Update camera rotation from mouse movement
-    camera.yaw += mouse_xy_diff.x * camera.sensitivity;
-    camera.pitch += mouse_xy_diff.y * camera.sensitivity;
-    camera.pitch = glm::clamp(camera.pitch, -glm::radians(89.0f), 0.0f);
-
-    // Update camera position
-    const glm::vec4 rotatedPos = glm_aux::R(camera.yaw, camera.pitch) * glm::vec4(0.0f, 0.0f, camera.distance, 1.0f);
-    camera.pos = camera.lookAt + glm::vec3(rotatedPos);
-}
+//void Game::updateCamera(
+//    InputManagerPtr input)
+//{
+//    // Fetch mouse and compute movement since last frame
+//    auto mouse = input->GetMouseState();
+//    glm::ivec2 mouse_xy{ mouse.x, mouse.y };
+//    glm::ivec2 mouse_xy_diff{ 0, 0 };
+//    if (mouse.leftButton && camera.mouse_xy_prev.x >= 0)
+//        mouse_xy_diff = camera.mouse_xy_prev - mouse_xy;
+//    camera.mouse_xy_prev = mouse_xy;
+//
+//    // Update camera rotation from mouse movement
+//    camera.yaw += mouse_xy_diff.x * camera.sensitivity;
+//    camera.pitch += mouse_xy_diff.y * camera.sensitivity;
+//    camera.pitch = glm::clamp(camera.pitch, -glm::radians(89.0f), 0.0f);
+//
+//    // Update camera position
+//    const glm::vec4 rotatedPos = glm_aux::R(camera.yaw, camera.pitch) * glm::vec4(0.0f, 0.0f, camera.distance, 1.0f);
+//    camera.pos = camera.lookAt + glm::vec3(rotatedPos);
+//}
 
 //void Game::updatePlayer(
 //    float deltaTime,
