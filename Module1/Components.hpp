@@ -15,7 +15,7 @@ struct TransformComponent
 {
 	glm::vec3 position{ 0.f };
 	glm::vec3 scale{ 1.f };
-	float rotationY{ 0.f };
+	float rotationY{ 0.f };//radians
 };
 
 struct LinearVelocityComponent

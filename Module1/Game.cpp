@@ -95,9 +95,9 @@ bool Game::init()
     );
 
     auto& horseTransform2 = registry.emplace<TransformComponent>(horse2);
-    horseTransform2.position = glm::vec3(30, 0, -35);
+    horseTransform2.position = glm::vec3(15, 0, 0);
     horseTransform2.scale = glm::vec3(0.01f, 0.01f, 0.01f);
-    horseTransform2.rotationY = 0.0f;
+    horseTransform2.rotationY = 1.571f;
 
     registry.emplace<MeshComponent>(
         horse2,
@@ -431,6 +431,63 @@ void Game::renderUI()
     ImGui::Checkbox("Spine subtree uses waving", &rightCharacterSubtreeUsesWave);
 
     ImGui::End(); // end info window
+
+    ImGui::Begin("ECS stuff");
+    
+    ImGui::Text("Time: %.2f", time);
+
+    auto playerView = registry.view<PlayerControllerComponent>();
+
+    for (auto entity : playerView)
+    {
+        auto& playerController = playerView.get<PlayerControllerComponent>(entity);
+
+        ImGui::SliderFloat(
+            "Player move speed",
+            &playerController.moveSpeed,
+            0.01f,
+            10.0f
+        );
+
+        break;
+    }
+
+    auto npcTransform = registry.view<
+        NPCControllerComponent,
+        TransformComponent>();
+
+    for (auto entity : npcTransform)
+    {
+        auto& transform = npcTransform.get<TransformComponent>(entity);
+
+        ImGui::DragFloat3(
+            "NPC scale",
+            &transform.scale.x,
+            0.01f,
+            0.001f,
+            0.1f
+        );
+
+        break;
+    }
+
+    auto npcView = registry.view<NPCControllerComponent>();
+
+    for (auto entity : npcView)
+    {
+        auto& npc = npcView.get<NPCControllerComponent>(entity);
+
+        ImGui::SliderFloat(
+            "NPC move speed",
+            &npc.moveSpeed,
+            0.01f,
+            10.0f
+        );
+
+        break;
+    }
+
+    ImGui::End();
 
     // In-world position label at horse position
     const auto VP_P_V = matrices.VP * matrices.P * matrices.V;
