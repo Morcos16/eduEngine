@@ -97,14 +97,14 @@ private:
     } player;
 
     // Game meshes
-    std::shared_ptr<eeng::RenderableMesh> grassMesh, horseMesh, characterMesh;
+    std::shared_ptr<eeng::RenderableMesh> grassMesh, horseMesh, foxMesh, characterMesh;
 
     // Game entity transformations
     glm::mat4 characterWorldMatrix1, characterWorldMatrix2, characterWorldMatrix3;
-    glm::mat4 grassWorldMatrix, horseWorldMatrix;
+    glm::mat4 grassWorldMatrix, horseWorldMatrix, foxWorldMatrix;
 
     // Game entity AABBs (for collision detection or visualization)
-    eeng::AABB character_aabb1, character_aabb2, character_aabb3, horse_aabb, grass_aabb;
+    eeng::AABB character_aabb1, character_aabb2, character_aabb3, horse_aabb, fox_aabb, grass_aabb;
 
     // Placeholder animation demo state
     int middleCharacterAnimIndex = 1;

@@ -30,6 +30,10 @@ bool Game::init()
     horseMesh = std::make_shared<eeng::RenderableMesh>();
     horseMesh->load("assets/Animals/Horse.fbx", false);
 
+    //fox
+    foxMesh = std::make_shared<eeng::RenderableMesh>();
+    foxMesh->load("assets/Animals/Fox.fbx", false);
+
     // Character
     characterMesh = std::make_shared<eeng::RenderableMesh>();
 #if 0
@@ -76,6 +80,11 @@ bool Game::init()
 
     horseWorldMatrix = glm_aux::TRS(
         { 30.0f, 0.0f, -35.0f },
+        35.0f, { 0, 1, 0 },
+        { 0.01f, 0.01f, 0.01f });
+
+    foxWorldMatrix = glm_aux::TRS(
+        { 30.0f, 0.0f, 35.0f },
         35.0f, { 0, 1, 0 },
         { 0.01f, 0.01f, 0.01f });
 
@@ -162,6 +171,11 @@ void Game::render(
     forwardRenderer->renderMesh(horseMesh, horseWorldMatrix);
     horse_aabb = horseMesh->m_model_aabb.post_transform(horseWorldMatrix);
 
+    // Fox
+    foxMesh->animate(3, time);
+    forwardRenderer->renderMesh(foxMesh, foxWorldMatrix);
+    fox_aabb = foxMesh->m_model_aabb.post_transform(foxWorldMatrix);
+
     // Character, instance 1 (middle, moving) - single clip demo
     characterMesh->animate(middleCharacterAnimIndex, time * characterAnimSpeed);
     forwardRenderer->renderMesh(characterMesh, characterWorldMatrix1);
@@ -208,6 +222,7 @@ void Game::render(
         shapeRenderer->push_basis_basic(characterWorldMatrix3, 1.0f);
         shapeRenderer->push_basis_basic(grassWorldMatrix, 1.0f);
         shapeRenderer->push_basis_basic(horseWorldMatrix, 1.0f);
+        shapeRenderer->push_basis_basic(foxWorldMatrix, 1.0f);
     }
 
     // Debug draw AABBs
