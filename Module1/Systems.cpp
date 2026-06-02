@@ -74,6 +74,43 @@ void PlayerControllerSystem::update(entt::registry& registry, float dt, InputMan
     }
 }
 
+void NPCControllerSystem::update(entt::registry& registry, float dt)
+{
+    auto view = registry.view <
+        TransformComponent,
+        NPCControllerComponent,
+        LinearVelocityComponent>();
+
+    for (auto entity : view)
+    {
+        auto& transform = view.get<TransformComponent>(entity);
+        auto& velocity = view.get<LinearVelocityComponent>(entity);
+        auto& npc = view.get<NPCControllerComponent>(entity);
+
+        if (npc.waypoints.empty())
+            continue;
+
+        glm::vec3 target = npc.waypoints[npc.currentWaypoint];
+        glm::vec3 direction = target - transform.position;
+
+        float distance = glm::length(direction);
+
+        if (distance < 0.5f) 
+        {
+            npc.currentWaypoint++;
+            if (npc.currentWaypoint >= npc.waypoints.size())
+                npc.currentWaypoint = 0;
+        }
+
+        if (distance > 0.001f)
+        {
+            direction = glm::normalize(direction);
+        }
+
+        velocity.velocity = direction * npc.moveSpeed;
+    }
+}
+
 void CameraSystem::update(entt::registry& registry, InputManagerPtr input, Camera& camera)
 {
     auto view = registry.view <

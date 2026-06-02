@@ -27,6 +27,12 @@ public:
 	void update(entt::registry& registry, float dt, InputManagerPtr input, Camera& camera);
 };
 
+class NPCControllerSystem
+{
+public:
+	void update(entt::registry& registry, float dt);
+};
+
 class CameraSystem
 {
 public:

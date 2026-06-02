@@ -48,6 +48,7 @@ private:
     MovementSystem movementSystem;
     RenderSystem renderSystem;
     PlayerControllerSystem playerControllerSystem;
+    NPCControllerSystem npcControllerSystem;
     CameraSystem cameraSystem;
 
     // Camera

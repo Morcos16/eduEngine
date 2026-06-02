@@ -110,6 +110,14 @@ bool Game::init()
     foxTransform.scale = glm::vec3(0.01f, 0.01f, 0.01f);
     foxTransform.rotationY = 0.0f;
 
+    auto& npc = registry.emplace<NPCControllerComponent>(fox);
+    npc.waypoints.push_back(glm::vec3(30, 0, -30));
+    npc.waypoints.push_back(glm::vec3(-30, 0, -30));
+    npc.waypoints.push_back(glm::vec3(-30, 0, 30));
+    npc.waypoints.push_back(glm::vec3(30, 0, 30));
+
+    registry.emplace<LinearVelocityComponent>(fox);
+
     registry.emplace<MeshComponent>(
         fox,
         foxMesh
@@ -187,6 +195,7 @@ void Game::update(
     InputManagerPtr input)
 {
     playerControllerSystem.update(registry, deltaTime, input, camera);
+    npcControllerSystem.update(registry, deltaTime);
     movementSystem.update(registry, deltaTime);
     cameraSystem.update(registry, input, camera);
     //updateCamera(input);

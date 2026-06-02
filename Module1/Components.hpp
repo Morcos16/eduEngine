@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <glm/glm.hpp>
+#include <vector>
 
 namespace eeng 
 {
@@ -30,6 +31,15 @@ struct MeshComponent
 struct PlayerControllerComponent
 {
 	float moveSpeed{ 5.0f };
+};
+
+struct NPCControllerComponent
+{
+	float moveSpeed{ 5.0f };
+
+	std::vector<glm::vec3> waypoints;
+
+	int currentWaypoint = 0;
 };
 
 struct CameraComponent
