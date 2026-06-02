@@ -24,7 +24,12 @@ bool Game::init()
     //entity_registry->emplace<Tfm>(ent1, Tfm{});
 
     auto amy = registry.create();
+    auto amy2 = registry.create();
+    auto amy3 = registry.create();
     auto horse = registry.create();
+    auto fox = registry.create();
+    auto grass = registry.create();
+    auto horse2 = registry.create();
 
     // Grass
     grassMesh = std::make_shared<eeng::RenderableMesh>();
@@ -42,24 +47,78 @@ bool Game::init()
     characterMesh = std::make_shared<eeng::RenderableMesh>();
     characterMesh->load("assets/Amy/Ch46_nonPBR.fbx");
 
+    // Amy 1 & 2 & 3
     auto& amyTransform = registry.emplace<TransformComponent>(amy);
-    amyTransform.position = glm::vec3(0, 0, 10);
+    amyTransform.position = glm::vec3(0, 0, 0);
     amyTransform.scale = glm::vec3(0.03f, 0.03f, 0.03f);
     amyTransform.rotationY = 0.0f;
 
+    registry.emplace<MeshComponent>(
+        amy,
+        characterMesh
+    );
+    auto& amy2Transform = registry.emplace<TransformComponent>(amy2);
+    amy2Transform.position = glm::vec3(-3, 0, 0);
+    amy2Transform.scale = glm::vec3(0.03f, 0.03f, 0.03f);
+    amy2Transform.rotationY = 0.0f;
+
+    registry.emplace<MeshComponent>(
+        amy2,
+        characterMesh
+    );
+    auto& amy3Transform = registry.emplace<TransformComponent>(amy3);
+    amy3Transform.position = glm::vec3(3, 0, 0);
+    amy3Transform.scale = glm::vec3(0.03f, 0.03f, 0.03f);
+    amy3Transform.rotationY = 0.0f;
+
+    registry.emplace<MeshComponent>(
+        amy3,
+        characterMesh
+    );
+
+    //Horse 1 & 2
     auto& horseTransform = registry.emplace<TransformComponent>(horse);
     horseTransform.position = glm::vec3(10, 0, 0);
     horseTransform.scale = glm::vec3(0.01f, 0.01f, 0.01f);
     horseTransform.rotationY = 0.0f;
 
     registry.emplace<MeshComponent>(
-        amy,
-        characterMesh
-    );
-    registry.emplace<MeshComponent>(
         horse,
         horseMesh
     );
+
+    auto& horseTransform2 = registry.emplace<TransformComponent>(horse2);
+    horseTransform2.position = glm::vec3(30, 0, -35);
+    horseTransform2.scale = glm::vec3(0.01f, 0.01f, 0.01f);
+    horseTransform2.rotationY = 0.0f;
+
+    registry.emplace<MeshComponent>(
+        horse2,
+        horseMesh
+    );
+
+    // Fox
+    auto& foxTransform = registry.emplace<TransformComponent>(fox);
+    foxTransform.position = glm::vec3(30, 0, 35);
+    foxTransform.scale = glm::vec3(0.01f, 0.01f, 0.01f);
+    foxTransform.rotationY = 0.0f;
+
+    registry.emplace<MeshComponent>(
+        fox,
+        foxMesh
+    );
+
+    // Grass
+    auto& grassTransform = registry.emplace<TransformComponent>(grass);
+    grassTransform.position = glm::vec3(0, 0, 0);
+    grassTransform.scale = glm::vec3(100.0f, 100.0f, 100.0f);
+    grassTransform.rotationY = 0.0f;
+
+    registry.emplace<MeshComponent>(
+        grass,
+        grassMesh
+    );
+
 #if 0
     // Character
     characterMesh->load("assets/Ultimate Platformer Pack/Character/Character.fbx", false);
