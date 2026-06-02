@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "Log.hpp"
 #include "Game.hpp"
+#include "Components.hpp"
 
 bool Game::init()
 {
@@ -14,13 +15,16 @@ bool Game::init()
     shapeRenderer->init();
 
     // Do some entt stuff
-    entity_registry = std::make_shared<entt::registry>();
-    auto ent1 = entity_registry->create();
-    struct Tfm
-    {
-        float x, y, z;
-    };
-    entity_registry->emplace<Tfm>(ent1, Tfm{});
+    //entity_registry = std::make_shared<entt::registry>();
+    //auto ent1 = entity_registry->create();
+    //struct Tfm
+    //{
+    //    float x, y, z;
+    //};
+    //entity_registry->emplace<Tfm>(ent1, Tfm{});
+
+    auto amy = registry.create();
+    auto horse = registry.create();
 
     // Grass
     grassMesh = std::make_shared<eeng::RenderableMesh>();
@@ -36,6 +40,26 @@ bool Game::init()
 
     // Character
     characterMesh = std::make_shared<eeng::RenderableMesh>();
+    characterMesh->load("assets/Amy/Ch46_nonPBR.fbx");
+
+    auto& amyTransform = registry.emplace<TransformComponent>(amy);
+    amyTransform.position = glm::vec3(0, 0, 10);
+    amyTransform.scale = glm::vec3(0.03f, 0.03f, 0.03f);
+    amyTransform.rotationY = 0.0f;
+
+    auto& horseTransform = registry.emplace<TransformComponent>(horse);
+    horseTransform.position = glm::vec3(10, 0, 0);
+    horseTransform.scale = glm::vec3(0.01f, 0.01f, 0.01f);
+    horseTransform.rotationY = 0.0f;
+
+    registry.emplace<MeshComponent>(
+        amy,
+        characterMesh
+    );
+    registry.emplace<MeshComponent>(
+        horse,
+        horseMesh
+    );
 #if 0
     // Character
     characterMesh->load("assets/Ultimate Platformer Pack/Character/Character.fbx", false);
@@ -54,7 +78,7 @@ bool Game::init()
 #endif
 #if 1
     // Amy 5.0.1 PACK FBX
-    characterMesh->load("assets/Amy/Ch46_nonPBR.fbx");
+    //characterMesh->load("assets/Amy/Ch46_nonPBR.fbx");
     characterMesh->load("assets/Amy/idle.fbx", true);
     characterMesh->load("assets/Amy/walking.fbx", true);
     characterMesh->load("assets/Amy/waving.fbx", true);
@@ -96,6 +120,7 @@ void Game::update(
     float deltaTime,
     InputManagerPtr input)
 {
+    movementSystem.update(registry, deltaTime);
     updateCamera(input);
 
     updatePlayer(deltaTime, input);
@@ -152,6 +177,7 @@ void Game::render(
 
     matrices.windowSize = glm::ivec2(windowWidth, windowHeight);
 
+
     // Projection matrix
     const float aspectRatio = float(windowWidth) / windowHeight;
     matrices.P = glm::perspective(glm::radians(60.0f), aspectRatio, camera.nearPlane, camera.farPlane);
@@ -162,30 +188,49 @@ void Game::render(
     // Begin rendering pass
     forwardRenderer->beginPass(matrices.P, matrices.V, pointlight.pos, pointlight.color, camera.pos);
 
+    //temp<
+    //auto view = registry.view<TransformComponent, MeshComponent>();
+
+    //for (auto entity : view) 
+    //{
+    //    auto& transform = view.get<TransformComponent>(entity);
+    //    auto& mesh = view.get<MeshComponent>(entity);
+    //    
+    //    glm::mat4 worldMatrix{ 1.0f };
+    //    worldMatrix = glm::translate(worldMatrix, transform.position);
+    //    worldMatrix = glm::rotate(worldMatrix, transform.rotationY, glm::vec3(0, 1, 0));
+    //    worldMatrix = glm::scale(worldMatrix, transform.scale);
+
+    //    forwardRenderer->renderMesh(mesh.mesh, worldMatrix);
+    //}
+    //temp>
+
+    renderSystem.render(registry, forwardRenderer.get());
+
     // Grass
-    forwardRenderer->renderMesh(grassMesh, grassWorldMatrix);
-    grass_aabb = grassMesh->m_model_aabb.post_transform(grassWorldMatrix);
+    /*forwardRenderer->renderMesh(grassMesh, grassWorldMatrix);
+    grass_aabb = grassMesh->m_model_aabb.post_transform(grassWorldMatrix);*/
 
     // Horse
-    horseMesh->animate(3, time);
+    /*horseMesh->animate(3, time);
     forwardRenderer->renderMesh(horseMesh, horseWorldMatrix);
-    horse_aabb = horseMesh->m_model_aabb.post_transform(horseWorldMatrix);
+    horse_aabb = horseMesh->m_model_aabb.post_transform(horseWorldMatrix);*/
 
     // Fox
-    foxMesh->animate(3, time);
+    /*foxMesh->animate(3, time);
     forwardRenderer->renderMesh(foxMesh, foxWorldMatrix);
-    fox_aabb = foxMesh->m_model_aabb.post_transform(foxWorldMatrix);
+    fox_aabb = foxMesh->m_model_aabb.post_transform(foxWorldMatrix);*/
 
     // Character, instance 1 (middle, moving) - single clip demo
-    characterMesh->animate(middleCharacterAnimIndex, time * characterAnimSpeed);
+    /*characterMesh->animate(middleCharacterAnimIndex, time * characterAnimSpeed);
     forwardRenderer->renderMesh(characterMesh, characterWorldMatrix1);
-    character_aabb1 = characterMesh->m_model_aabb.post_transform(characterWorldMatrix1);
+    character_aabb1 = characterMesh->m_model_aabb.post_transform(characterWorldMatrix1);*/
 
     // Character, instance 2 (left) - two-clip full-body blend
     // Explanation: Both 'idle' and 'walk' clips are applied to the entire skeleton with a blend factor.
-    characterMesh->animateBlend(1, 2, time, time, leftCharacterAnimBlend);
+    /*characterMesh->animateBlend(1, 2, time, time, leftCharacterAnimBlend);
     forwardRenderer->renderMesh(characterMesh, characterWorldMatrix2);
-    character_aabb2 = characterMesh->m_model_aabb.post_transform(characterWorldMatrix2);
+    character_aabb2 = characterMesh->m_model_aabb.post_transform(characterWorldMatrix2);*/
 
     // Character, instance 3 (right) - filtered walk + wave
     // Explanation: Nodes in the "mixamorig:Spine" branch (upper body) gets the 'wave' clip, while the rest (lower body) gets the 'walk' clip.
@@ -194,9 +239,9 @@ void Game::render(
     upperBodyFilter.mode = rightCharacterSubtreeUsesWave
         ? eeng::AnimationBranchDesc::Mode::IncludeSubtree
         : eeng::AnimationBranchDesc::Mode::ExcludeSubtree;
-    characterMesh->animateBlend(2 /* walk */, 3 /* wave */, time, time, upperBodyFilter);
-    forwardRenderer->renderMesh(characterMesh, characterWorldMatrix3);
-    character_aabb3 = characterMesh->m_model_aabb.post_transform(characterWorldMatrix3);
+    //characterMesh->animateBlend(2 /* walk */, 3 /* wave */, time, time, upperBodyFilter);
+    //forwardRenderer->renderMesh(characterMesh, characterWorldMatrix3);
+    //character_aabb3 = characterMesh->m_model_aabb.post_transform(characterWorldMatrix3);
 
     // End rendering pass
     drawcallCount = forwardRenderer->endPass();

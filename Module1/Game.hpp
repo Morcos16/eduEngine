@@ -2,11 +2,12 @@
 #define Game_hpp
 #pragma once
 
-#include <entt/fwd.hpp>
+#include <entt/entt.hpp>
 #include "GameBase.h"
 #include "RenderableMesh.hpp"
 #include "ForwardRenderer.hpp"
 #include "ShapeRenderer.hpp"
+#include "Systems.hpp"
 
 /// @brief A Game may hold, update and render 3D geometry and GUI elements
 class Game : public eeng::GameBase
@@ -38,6 +39,14 @@ public:
     void destroy() override;
 
 private:
+    
+    // registry
+    entt::registry registry;
+    
+    //systems
+    MovementSystem movementSystem;
+    RenderSystem renderSystem;
+
     /// @brief For rendering of GUI elements
     void renderUI();
 
