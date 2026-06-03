@@ -33,15 +33,15 @@ bool Game::init()
     auto horse2 = registry.create();
 
     // Grass
-    grassMesh = std::make_shared<eeng::RenderableMesh>();
+    auto grassMesh = std::make_shared<eeng::RenderableMesh>();
     grassMesh->load("assets/grass/grass_trees_merged.fbx", false);
 
     // Horse
-    horseMesh = std::make_shared<eeng::RenderableMesh>();
+    auto horseMesh = std::make_shared<eeng::RenderableMesh>();
     horseMesh->load("assets/Animals/Horse.fbx", false);
 
     //fox
-    foxMesh = std::make_shared<eeng::RenderableMesh>();
+    auto foxMesh = std::make_shared<eeng::RenderableMesh>();
     foxMesh->load("assets/Animals/Fox.fbx", false);
 
     // Character
@@ -70,7 +70,7 @@ bool Game::init()
 
     // Playable Amy
     auto& amy3Transform = registry.emplace<TransformComponent>(moveableAmy);
-    amy3Transform.position = player.pos;
+    amy3Transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
     amy3Transform.scale = glm::vec3(0.03f, 0.03f, 0.03f);
     amy3Transform.rotationY = 0.0f;
 
@@ -171,20 +171,20 @@ bool Game::init()
     characterMesh->removeTranslationKeys("mixamorig:Hips");
 #endif
 
-    grassWorldMatrix = glm_aux::TRS(
-        { 0.0f, 0.0f, 0.0f },
-        0.0f, { 0, 1, 0 },
-        { 100.0f, 100.0f, 100.0f });
+    //grassWorldMatrix = glm_aux::TRS(
+    //    { 0.0f, 0.0f, 0.0f },
+    //    0.0f, { 0, 1, 0 },
+    //    { 100.0f, 100.0f, 100.0f });
 
-    horseWorldMatrix = glm_aux::TRS(
-        { 30.0f, 0.0f, -35.0f },
-        35.0f, { 0, 1, 0 },
-        { 0.01f, 0.01f, 0.01f });
+    //horseWorldMatrix = glm_aux::TRS(
+    //    { 30.0f, 0.0f, -35.0f },
+    //    35.0f, { 0, 1, 0 },
+    //    { 0.01f, 0.01f, 0.01f });
 
-    foxWorldMatrix = glm_aux::TRS(
-        { 30.0f, 0.0f, 35.0f },
-        35.0f, { 0, 1, 0 },
-        { 0.01f, 0.01f, 0.01f });
+    //foxWorldMatrix = glm_aux::TRS(
+    //    { 30.0f, 0.0f, 35.0f },
+    //    35.0f, { 0, 1, 0 },
+    //    { 0.01f, 0.01f, 0.01f });
 
     return true;
 }
@@ -206,26 +206,26 @@ void Game::update(
         glm_aux::R(time * 0.1f, { 0.0f, 1.0f, 0.0f }) *
         glm::vec4(100.0f, 100.0f, 100.0f, 1.0f));
 
-    characterWorldMatrix1 = glm_aux::TRS(
-        player.pos,
-        0.0f, { 0, 1, 0 },
-        { 0.03f, 0.03f, 0.03f });
+    //characterWorldMatrix1 = glm_aux::TRS(
+    //    player.pos,
+    //    0.0f, { 0, 1, 0 },
+    //    { 0.03f, 0.03f, 0.03f });
 
-    characterWorldMatrix2 = glm_aux::TRS(
-        { -3, 0, 0 },
-        time * glm::radians(50.0f), { 0, 1, 0 },
-        { 0.03f, 0.03f, 0.03f });
+    //characterWorldMatrix2 = glm_aux::TRS(
+    //    { -3, 0, 0 },
+    //    time * glm::radians(50.0f), { 0, 1, 0 },
+    //    { 0.03f, 0.03f, 0.03f });
 
-    characterWorldMatrix3 = glm_aux::TRS(
-        { 3, 0, 0 },
-        time * glm::radians(50.0f), { 0, 1, 0 },
-        { 0.03f, 0.03f, 0.03f });
+    //characterWorldMatrix3 = glm_aux::TRS(
+    //    { 3, 0, 0 },
+    //    time * glm::radians(50.0f), { 0, 1, 0 },
+    //    { 0.03f, 0.03f, 0.03f });
 
     // Intersect player view ray with AABBs of other objects 
     // Intersection results are stored in the ray's point_of_contact and can be used for picking, shooting, etc.
-    glm_aux::intersect_ray_AABB(player.viewRay, character_aabb2.min, character_aabb2.max);
-    glm_aux::intersect_ray_AABB(player.viewRay, character_aabb3.min, character_aabb3.max);
-    glm_aux::intersect_ray_AABB(player.viewRay, horse_aabb.min, horse_aabb.max);
+    //glm_aux::intersect_ray_AABB(player.viewRay, character_aabb2.min, character_aabb2.max);
+    //glm_aux::intersect_ray_AABB(player.viewRay, character_aabb3.min, character_aabb3.max);
+    //glm_aux::intersect_ray_AABB(player.viewRay, horse_aabb.min, horse_aabb.max);
 
     // We can also compute a ray from the current mouse position picking etc
     // Let's try it: if the left mouse button is pressed, 
@@ -325,27 +325,27 @@ void Game::render(
 
     // Debug draw player view ray
     // Green line if the ray hits an object, white line if it doesn't.
-    if (player.viewRay)
-    {
-        shapeRenderer->push_states(ShapeRendering::Color4u{ 0xff00ff00 });
-        shapeRenderer->push_line(player.viewRay.origin, player.viewRay.point_of_contact());
-    }
-    else
-    {
-        shapeRenderer->push_states(ShapeRendering::Color4u{ 0xffffffff });
-        shapeRenderer->push_line(player.viewRay.origin, player.viewRay.origin + player.viewRay.dir * 100.0f);
-    }
-    shapeRenderer->pop_states<ShapeRendering::Color4u>();
+    //if (player.viewRay)
+    //{
+    //    shapeRenderer->push_states(ShapeRendering::Color4u{ 0xff00ff00 });
+    //    shapeRenderer->push_line(player.viewRay.origin, player.viewRay.point_of_contact());
+    //}
+    //else
+    //{
+    //    shapeRenderer->push_states(ShapeRendering::Color4u{ 0xffffffff });
+    //    shapeRenderer->push_line(player.viewRay.origin, player.viewRay.origin + player.viewRay.dir * 100.0f);
+    //}
+    //shapeRenderer->pop_states<ShapeRendering::Color4u>();
 
     // Debug draw object bases
-    {
-        shapeRenderer->push_basis_basic(characterWorldMatrix1, 1.0f);
-        shapeRenderer->push_basis_basic(characterWorldMatrix2, 1.0f);
-        shapeRenderer->push_basis_basic(characterWorldMatrix3, 1.0f);
-        shapeRenderer->push_basis_basic(grassWorldMatrix, 1.0f);
-        shapeRenderer->push_basis_basic(horseWorldMatrix, 1.0f);
-        shapeRenderer->push_basis_basic(foxWorldMatrix, 1.0f);
-    }
+    //{
+    //    shapeRenderer->push_basis_basic(characterWorldMatrix1, 1.0f);
+    //    shapeRenderer->push_basis_basic(characterWorldMatrix2, 1.0f);
+    //    shapeRenderer->push_basis_basic(characterWorldMatrix3, 1.0f);
+    //    shapeRenderer->push_basis_basic(grassWorldMatrix, 1.0f);
+    //    shapeRenderer->push_basis_basic(horseWorldMatrix, 1.0f);
+    //    shapeRenderer->push_basis_basic(foxWorldMatrix, 1.0f);
+    //}
 
     // Debug draw AABBs
     {
@@ -491,7 +491,7 @@ void Game::renderUI()
 
     // In-world position label at horse position
     const auto VP_P_V = matrices.VP * matrices.P * matrices.V;
-    auto world_pos = glm::vec3(horseWorldMatrix[3]);
+    auto world_pos = glm::vec3(0,0,0);
     glm::ivec2 window_coords;
     if (glm_aux::window_coords_from_world_pos(world_pos, VP_P_V, window_coords))
     {

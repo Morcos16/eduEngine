@@ -33,7 +33,7 @@ void RenderSystem::render(entt::registry& registry, eeng::ForwardRenderer* forwa
 
         glm::mat4 worldMatrix{ 1.0f };
         worldMatrix = glm::translate(worldMatrix, transform.position);
-        worldMatrix = glm::rotate(worldMatrix, transform.rotationY, glm::vec3(0, 1, 0));
+        worldMatrix = glm::rotate(worldMatrix, transform.rotationY, glm_aux::vec3_010);
         worldMatrix = glm::scale(worldMatrix, transform.scale);
 
         forwardRenderer->renderMesh(mesh.mesh, worldMatrix);

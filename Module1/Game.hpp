@@ -102,22 +102,23 @@ private:
     } pointlight;
 
     // (Placeholder) Player data
-    struct Player
-    {
-        glm::vec3 pos = glm_aux::vec3_000;
-        float velocity{ 6.0f };
+    //struct Player
+    //{
+    //    glm::vec3 pos = glm_aux::vec3_000;
+    //    float velocity{ 6.0f };
 
-        // Local vectors & view ray (computed when camera/player is updated)
-        glm::vec3 fwd, right;
-        glm_aux::Ray viewRay;
-    } player;
+    //    // Local vectors & view ray (computed when camera/player is updated)
+    //    glm::vec3 fwd, right;
+    //    glm_aux::Ray viewRay;
+    //} player;
 
     // Game meshes
-    std::shared_ptr<eeng::RenderableMesh> grassMesh, horseMesh, foxMesh, characterMesh;
+    //std::shared_ptr<eeng::RenderableMesh> grassMesh, horseMesh, foxMesh, characterMesh;
+    std::shared_ptr<eeng::RenderableMesh> characterMesh;
 
     // Game entity transformations
-    glm::mat4 characterWorldMatrix1, characterWorldMatrix2, characterWorldMatrix3;
-    glm::mat4 grassWorldMatrix, horseWorldMatrix, foxWorldMatrix;
+    //glm::mat4 characterWorldMatrix1, characterWorldMatrix2, characterWorldMatrix3;
+    //glm::mat4 grassWorldMatrix, horseWorldMatrix, foxWorldMatrix;
 
     // Game entity AABBs (for collision detection or visualization)
     eeng::AABB character_aabb1, character_aabb2, character_aabb3, horse_aabb, fox_aabb, grass_aabb;
